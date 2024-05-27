@@ -4,4 +4,4 @@
   tasks:
     - name: "Include vector-role"
       include_role:
-        name: "idealista.vector"
+        name: "buluma.vector"
