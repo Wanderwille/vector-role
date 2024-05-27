@@ -4,4 +4,4 @@
   tasks:
     - name: "Include vector-role"
       include_role:
-        name: "buluma.vector"
+        name: "keqpup232.vector_role"
