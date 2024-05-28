@@ -1,9 +1,9 @@
 galaxy_info:
   role_name: vector_role
-  namespace: wineperm
-  author: Krasilnikov Leonid
+  namespace: empty
+  author: empty
   description: install vector role
-  company: student
+  company: empty
 
   license: MIT
 

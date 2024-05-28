@@ -1,16 +1,42 @@
 ---
-- name: Download and install vector packages for UBUNTU
-  become: true
-  ansible.builtin.apt:
-    deb: https://packages.timber.io/vector/{{ vector_version }}/vector_{{ vector_version }}-1_amd64.deb
-  notify: Start Vector service
-  when: ansible_facts['distribution'] == "Ubuntu"
-
-- name: Download and install vector packages for Centos8
-  become: true
+- name: Ensure ca-certificates are installed
   ansible.builtin.yum:
-    name: https://packages.timber.io/vector/{{ vector_version }}/vector-{{ vector_version }}-1.x86_64.rpm
+    name: ca-certificates
+    state: latest
+  become: true
+
+- name: Download vector package without SSL verification
+  ansible.builtin.get_url:
+    url: https://packages.timber.io/vector/{{ vector_version }}/vector-{{ vector_version }}-1.x86_64.rpm
+    dest: /tmp/vector-{{ vector_version }}-1.x86_64.rpm
+    validate_certs: no
+  become: true
+
+- name: Install vector package
+  ansible.builtin.yum:
+    name: /tmp/vector-{{ vector_version }}-1.x86_64.rpm
     state: present
     disable_gpg_check: true
-  notify: Start Vector service
-  when: ansible_facts['distribution'] == "CentOS"
+  become: true
+
+- name: Ensure vector configuration directory exists
+  ansible.builtin.file:
+    path: /etc/vector
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Create vector configuration file
+  ansible.builtin.copy:
+    dest: /etc/vector/vector.toml
+    content: |
+      # Example Vector configuration
+      [sources.in]
+        type = "stdin"
+
+      [sinks.out]
+        inputs = ["in"]
+        type = "console"
+        encoding.codec = "json"
+  become: true
